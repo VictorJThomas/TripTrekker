@@ -1,16 +1,26 @@
-# triptekker
+# Couteau App
 
-A new Flutter project.
+Esta aplicación muestra 7 vistas principales que consumen diferentes APIs externas. A continuación se describe cada una de las vistas:
 
-## Getting Started
+## Home
+Esta es la vista principal de la aplicación.
 
-This project is a starting point for a Flutter application.
+## Géneros
+En esta vista, se muestra si un nombre es masculino o femenino utilizando una API específica.
 
-A few resources to get you started if this is your first Flutter project:
+## Edad
+Esta vista estima si un nombre es de una persona anciana, adulta o joven utilizando una API determinada.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Universidad
+En esta vista, se muestra una lista de universidades, su dominio y enlace correspondiente a un país específico utilizando una API dedicada.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Clima
+Esta vista muestra el clima actual, temperatura y descripción de la ciudad por defecto (Santo Domingo) utilizando la API de OpenWeather.
+
+## Noticias
+En esta vista, se muestran las últimas noticias obtenidas de un periódico digital utilizando su API correspondiente.
+
+## About
+En esta vista, se muestra información del perfil de GitHub utilizando la API de GitHub.
+
+
