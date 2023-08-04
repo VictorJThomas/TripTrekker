@@ -1,8 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="swiss_knife_couteau"
+        android:label="triptekker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54"/>
+
+               
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,5 +35,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

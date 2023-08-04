@@ -1,5 +1,5 @@
-name: couteau
-description: Couteau multi tool app that consumes api's to help u in daily problems.
+name: triptekker
+description: A new Flutter project.
 publish_to: 'none'
 
 version: 1.5.0
@@ -11,8 +11,19 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  http: ^1.1.0
+  http: ^0.13.4
   url_launcher: ^6.1.11
+  cloud_firestore: ^4.8.4
+  firebase_auth: ^4.7.2
+  firebase_storage: ^11.2.5
+  image_picker:
+  firebase_core:
+  fluttertoast: ^8.2.2
+  google_maps_flutter: ^2.0.11
+  flutter_polyline_points: ^1.0.0
+  geocoding: ^2.1.0
+  location: ^5.0.1
+  google_maps_webservice: ^0.0.20-nullsafety.5
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +32,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+
+# To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/imgs/
