@@ -64,6 +64,7 @@ class MapScreenState extends State<MapScreen> {
             },
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+            padding: EdgeInsets.only(right: 10.0),
           ),
           Positioned(
             top: 16.0,
