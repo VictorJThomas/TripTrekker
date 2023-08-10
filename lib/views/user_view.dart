@@ -40,6 +40,7 @@ class UserView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontFamily: 'Arial',
+                color: Colors.black, // Cambia el color del texto a negro
               ),
             ),
           ),
@@ -57,7 +58,10 @@ class UserView extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text('Error al obtener datos');
+                    return Text('Error al obtener datos',
+                        style: TextStyle(
+                            color: Colors
+                                .black)); // Cambia el color del texto a negro
                   } else {
                     String? username =
                         snapshot.data?.get('username') as String?;
@@ -73,6 +77,8 @@ class UserView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            color: Colors
+                                .black, // Cambia el color del texto a negro
                           ),
                         ),
                         SizedBox(height: 10),
@@ -86,8 +92,13 @@ class UserView extends StatelessWidget {
                         // Botón para cerrar sesión
                         ElevatedButton.icon(
                           onPressed: () => _signOut(context),
-                          icon: Icon(Icons.logout),
-                          label: Text('Cerrar sesión'),
+                          icon: Icon(Icons.logout,
+                              color: Colors
+                                  .black), // Cambia el color del icono a negro
+                          label: Text('Cerrar sesión',
+                              style: TextStyle(
+                                  color: Colors
+                                      .black)), // Cambia el color del texto a negro
                         ),
                       ],
                     );
@@ -107,8 +118,12 @@ class UserView extends StatelessWidget {
                 onPressed: () {
                   // Lógica para navegar a la primera vista
                 },
-                icon: Icon(Icons.star), // Icono de estrella
-                label: Text('Lugares favoritos del usuario'),
+                icon: Icon(Icons.star,
+                    color: Colors.black), // Cambia el color del icono a negro
+                label: Text('Lugares favoritos del usuario',
+                    style: TextStyle(
+                        color:
+                            Colors.black)), // Cambia el color del texto a negro
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(200, 50), // Ancho y alto del botón
                 ),
@@ -118,8 +133,12 @@ class UserView extends StatelessWidget {
                 onPressed: () {
                   // Lógica para navegar a la segunda vista
                 },
-                icon: Icon(Icons.camera), // Icono de cámara
-                label: Text('Momentos guardados a través de la cámara'),
+                icon: Icon(Icons.camera,
+                    color: Colors.black), // Cambia el color del icono a negro
+                label: Text('Momentos guardados a través de la cámara',
+                    style: TextStyle(
+                        color:
+                            Colors.black)), // Cambia el color del texto a negro
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(200, 50),
                 ),

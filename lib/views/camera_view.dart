@@ -90,7 +90,11 @@ class _CameraViewState extends State<CameraView> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Imagen guardada en la galería"),
+            content: Text(
+              "Imagen guardada en la galería",
+              style: TextStyle(
+                  color: Colors.black), // Cambia el color del texto a negro
+            ),
             duration: Duration(seconds: 2),
           ),
         );
@@ -114,15 +118,23 @@ class _CameraViewState extends State<CameraView> {
                 CameraPreview(_controller),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: _isTakingPicture ? null : _takePicture,
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(16.0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 16.0), // Espaciado vertical deseado
+                    child: ElevatedButton(
+                      onPressed: _isTakingPicture ? null : _takePicture,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(16.0),
+                      ),
+                      child: _isTakingPicture
+                          ? const CircularProgressIndicator()
+                          : const Icon(
+                              Icons.camera,
+                              color: Colors
+                                  .black, // Cambia el color del icono a negro
+                            ),
                     ),
-                    child: _isTakingPicture
-                        ? const CircularProgressIndicator()
-                        : const Icon(Icons.camera),
                   ),
                 ),
               ],
@@ -149,7 +161,13 @@ class ImagePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Vista Previa')),
+      appBar: AppBar(
+        title: const Text(
+          'Vista Previa',
+          style: TextStyle(
+              color: Colors.black), // Cambia el color del texto a negro
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -160,13 +178,21 @@ class ImagePreviewScreen extends StatelessWidget {
                 onImageSaved();
                 Navigator.pop(context);
               },
-              child: const Text('Guardar'),
+              child: const Text(
+                'Guardar',
+                style: TextStyle(
+                    color: Colors.black), // Cambia el color del texto a negro
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Descartar'),
+              child: const Text(
+                'Descartar',
+                style: TextStyle(
+                    color: Colors.black), // Cambia el color del texto a negro
+              ),
             ),
           ],
         ),
