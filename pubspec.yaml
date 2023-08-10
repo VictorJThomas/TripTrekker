@@ -24,6 +24,9 @@ dependencies:
   geocoding: ^2.1.0
   location: ^5.0.1
   google_maps_webservice: ^0.0.20-nullsafety.5
+  camera: ^0.10.5+3
+  path_provider: ^2.1.0
+  gallery_saver: ^2.3.2
 
 dev_dependencies:
   flutter_test:

@@ -1,16 +1,174 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
-class CameraView extends StatelessWidget {
+class CameraView extends StatefulWidget {
+  const CameraView({super.key});
+
+  @override
+  _CameraViewState createState() => _CameraViewState();
+}
+
+class _CameraViewState extends State<CameraView> {
+  late CameraController _controller;
+  Future<void>? _initializeControllerFuture;
+  File? _imageFile;
+  bool _isTakingPicture = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    final cameras = await availableCameras();
+    final firstCamera = cameras.first;
+
+    _controller = CameraController(
+      firstCamera,
+      ResolutionPreset.medium,
+    );
+
+    _initializeControllerFuture = _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _takePicture() async {
+    if (_isTakingPicture) return;
+
+    try {
+      setState(() {
+        _isTakingPicture = true;
+      });
+
+      await _initializeControllerFuture!;
+      final imagePath = await _controller.takePicture();
+      setState(() {
+        _imageFile = File(imagePath.path);
+      });
+      _showPreviewDialog();
+    } catch (e) {
+      print("Error al tomar la foto: $e");
+    } finally {
+      setState(() {
+        _isTakingPicture = false;
+      });
+    }
+  }
+
+  void _showPreviewDialog() async {
+    if (_imageFile != null) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImagePreviewScreen(
+            imagePath: _imageFile!.path,
+            onImageSaved: () => _savePhotoToDatabase(),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _savePhotoToDatabase() async {
+    if (_imageFile != null) {
+      try {
+        final appDir = await getApplicationDocumentsDirectory();
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final filePath = '${appDir.path}/$fileName';
+
+        await _imageFile!.copy(filePath);
+        await GallerySaver.saveImage(filePath);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Imagen guardada en la galería"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        _imageFile = null;
+      } catch (e) {
+        print("Error al guardar la foto: $e");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Stack(
+              children: [
+                CameraPreview(_controller),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                    onPressed: _isTakingPicture ? null : _takePicture,
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(16.0),
+                    ),
+                    child: _isTakingPicture
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.camera),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
+  }
+}
+
+class ImagePreviewScreen extends StatelessWidget {
+  final String imagePath;
+  final VoidCallback onImageSaved;
+
+  const ImagePreviewScreen({
+    super.key,
+    required this.imagePath,
+    required this.onImageSaved,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Vista Previa')),
       body: Center(
-        child: Text(
-          'cameraFunction',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.file(File(imagePath)),
+            ElevatedButton(
+              onPressed: () {
+                onImageSaved();
+                Navigator.pop(context);
+              },
+              child: const Text('Guardar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Descartar'),
+            ),
+          ],
         ),
       ),
     );
