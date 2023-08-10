@@ -64,6 +64,7 @@ class MapScreenState extends State<MapScreen> {
             },
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+            padding: EdgeInsets.only(right: 10.0),
           ),
           Positioned(
             top: 16.0,
@@ -74,7 +75,7 @@ class MapScreenState extends State<MapScreen> {
         ],
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 90.0, right: 0.0),
+        padding: const EdgeInsets.only(bottom: 90.0),
         child: FloatingActionButton(
           onPressed: _getCurrentLocation,
           mini: true,
