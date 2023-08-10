@@ -3,6 +3,11 @@
         android:label="triptekker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54"/>
+
+               
         <activity
             android:name=".MainActivity"
             android:exported="true"

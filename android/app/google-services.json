@@ -1,0 +1,31 @@
+{
+    "project_info": {
+        "project_number": "72103304543",
+        "project_id": "triptrekker-b1b57",
+        "storage_bucket": "triptrekker-b1b57.appspot.com"
+    },
+    "client": [{
+        "client_info": {
+            "mobilesdk_app_id": "1:72103304543:android:0354d8efc5bb1c171e6aea",
+            "android_client_info": {
+                "package_name": "com.example.triptekker"
+            }
+        },
+        "oauth_client": [{
+            "client_id": "72103304543-4hb04u6qspdb7b1kt1r6vep1thi9o5fa.apps.googleusercontent.com",
+            "client_type": 3
+        }],
+        "api_key": [{
+            "current_key": "AIzaSyC9wW101e08t3ik_xn7S8Sa0mvJT8pCudY"
+        }],
+        "services": {
+            "appinvite_service": {
+                "other_platform_oauth_client": [{
+                    "client_id": "72103304543-4hb04u6qspdb7b1kt1r6vep1thi9o5fa.apps.googleusercontent.com",
+                    "client_type": 3
+                }]
+            }
+        }
+    }],
+    "configuration_version": "1"
+}

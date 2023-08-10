@@ -1,16 +1,12 @@
-# triptekker
+# Test App
 
-A new Flutter project.
+Esta aplicación muestra 3 vistas principales que posee la aplicación. A continuación se describe cada una de las vistas:
 
-## Getting Started
+## Home
+Esta es la vista principal de la aplicación. Mostrará la información de los mapas y ubicación
 
-This project is a starting point for a Flutter application.
+## camera
+En esta vista, se ubicará la funcionalidad de la camara.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## User
+En esta vista, se muestra información del perfil del usuario y funcionalidades extra que puede desempeñar un usuario en base a su perfil.
