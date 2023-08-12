@@ -51,10 +51,11 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
             ),
           ),
           elevation: 4,
-          shape: const ContinuousRectangleBorder(
+          backgroundColor: _colorScheme.primary, // Color de fondo de la AppBar
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(40.0),
-              bottomRight: Radius.circular(40.0),
+              bottomLeft: Radius.circular(0.0),
+              bottomRight: Radius.circular(0.0),
             ),
           ),
         ),
