@@ -83,6 +83,15 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
   }
 
   Widget _buildCurrentView() {
+    return Expanded(
+      child: ConstrainedBox(
+        constraints: BoxConstraints.expand(),
+        child: _getCurrentView(),
+      ),
+    );
+  }
+
+  Widget _getCurrentView() {
     switch (_currentIndex) {
       case 0:
         return CameraView();
@@ -119,38 +128,35 @@ class MyBottomNavigationBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.camera_alt,
-                  color: iconColors[0], // Usar el color correspondiente
-                  size: 25,
-                ),
-                onPressed: () => onTap(0),
-              ),
+              _buildIconButton(0, Icons.camera_alt),
               VerticalDivider(
                 color: _colorScheme.onSurface, // Aplica el color en superficie
                 thickness: 2.0,
               ),
-              IconButton(
-                icon: Icon(Icons.location_on,
-                    color: iconColors[1], // Usar el color correspondiente
-                    size: 25),
-                onPressed: () => onTap(1),
-              ),
+              _buildIconButton(1, Icons.location_on),
               VerticalDivider(
                 color: _colorScheme.onSurface, // Aplica el color en superficie
                 thickness: 2.0,
               ),
-              IconButton(
-                icon: Icon(Icons.person_3_rounded,
-                    color: iconColors[2], // Usar el color correspondiente
-                    size: 25),
-                onPressed: () => onTap(2),
-              ),
+              _buildIconButton(2, Icons.person_3_rounded),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildIconButton(int index, IconData icon) {
+    return IconButton(
+      icon: Icon(
+        icon,
+        color: index == currentIndex
+            ? Colors.white // Cambia el color a blanco si está seleccionado
+            : iconColors[
+                index], // Mantén el color original si no está seleccionado
+        size: 25,
+      ),
+      onPressed: () => onTap(index),
     );
   }
 }
