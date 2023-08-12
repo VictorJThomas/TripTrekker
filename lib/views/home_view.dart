@@ -16,9 +16,9 @@ class TripTrekkerApp extends StatefulWidget {
 }
 
 class _TripTrekkerAppState extends State<TripTrekkerApp> {
-  int _currentIndex = 1; // Índice de la página principal
+  int _currentIndex = 1; 
 
-  late List<Color> _iconColors; // Arreglo para los colores de los íconos
+  late List<Color> _iconColors; 
 
   @override
   void initState() {
@@ -26,8 +26,8 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
     _iconColors = List.generate(
       3,
       (index) => index == _currentIndex
-          ? _colorScheme.onPrimary // Color cuando está seleccionado
-          : _colorScheme.secondary, // Color cuando no está seleccionado
+          ? _colorScheme.onPrimary
+          : _colorScheme.secondary, 
     );
   }
 
@@ -37,7 +37,7 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
       debugShowCheckedModeBanner: false,
       title: 'Trip Trekker',
       theme: ThemeData(
-        colorScheme: _colorScheme, // Aplica el esquema de colores
+        colorScheme: _colorScheme, 
         useMaterial3: true,
       ),
       home: Scaffold(
@@ -47,11 +47,11 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
             'Trip Trekker',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black, // Cambia el color del texto a negro
+              color: Colors.black,
             ),
           ),
           elevation: 4,
-          backgroundColor: _colorScheme.primary, // Color de fondo de la AppBar
+          backgroundColor: _colorScheme.primary, 
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(0.0),
@@ -60,21 +60,20 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
           ),
         ),
         body: Center(
-          child: _buildCurrentView(), // Mostrar la vista actual según el índice
+          child: _buildCurrentView(), 
         ),
         bottomNavigationBar: MyBottomNavigationBar(
           currentIndex: _currentIndex,
-          iconColors: _iconColors, // Pasar los colores de los íconos
+          iconColors: _iconColors, 
           onTap: (int index) {
             setState(() {
               _currentIndex = index;
-              // Actualizar los colores de los íconos al cambiar de índice
               _iconColors = List.generate(
                 3,
                 (i) => i == index
-                    ? _colorScheme.onPrimary // Color cuando está seleccionado
+                    ? _colorScheme.onPrimary
                     : _colorScheme
-                        .secondary, // Color cuando no está seleccionado
+                        .secondary, 
               );
             });
           },
@@ -108,7 +107,7 @@ class _TripTrekkerAppState extends State<TripTrekkerApp> {
 
 class MyBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
-  final List<Color> iconColors; // Colores de los íconos
+  final List<Color> iconColors;
   final Function(int) onTap;
 
   const MyBottomNavigationBar({
@@ -121,9 +120,9 @@ class MyBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50, // Ajusta este valor para cambiar la altura del BottomAppBar
+      height: 50,
       child: BottomAppBar(
-        color: _colorScheme.primary, // Aplica el color primario del esquema
+        color: _colorScheme.primary, 
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
@@ -131,12 +130,12 @@ class MyBottomNavigationBar extends StatelessWidget {
             children: [
               _buildIconButton(0, Icons.camera_alt),
               VerticalDivider(
-                color: _colorScheme.onSurface, // Aplica el color en superficie
+                color: _colorScheme.onSurface, 
                 thickness: 2.0,
               ),
               _buildIconButton(1, Icons.location_on),
               VerticalDivider(
-                color: _colorScheme.onSurface, // Aplica el color en superficie
+                color: _colorScheme.onSurface, 
                 thickness: 2.0,
               ),
               _buildIconButton(2, Icons.person_3_rounded),
@@ -152,9 +151,9 @@ class MyBottomNavigationBar extends StatelessWidget {
       icon: Icon(
         icon,
         color: index == currentIndex
-            ? Colors.white // Cambia el color a blanco si está seleccionado
+            ? Colors.white 
             : iconColors[
-                index], // Mantén el color original si no está seleccionado
+                index], 
         size: 25,
       ),
       onPressed: () => onTap(index),
@@ -172,6 +171,6 @@ final ColorScheme _colorScheme = ColorScheme(
   onError: Color.fromARGB(255, 255, 255, 255),
   secondary: Color.fromARGB(255, 0, 0, 0),
   onSecondary: Color.fromARGB(255, 255, 255, 255),
-  onSurface: Color.fromARGB(255, 34, 162, 88), // Usar el color primario
-  surface: Color.fromARGB(255, 34, 162, 88), // Usar el color primario
+  onSurface: Color.fromARGB(255, 34, 162, 88), 
+  surface: Color.fromARGB(255, 34, 162, 88), 
 );

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../views/login/BienvenidoView.dart';
+import 'favorites/favorites.dart';
 
 class UserView extends StatelessWidget {
   // Función para cerrar sesión
@@ -11,7 +12,7 @@ class UserView extends StatelessWidget {
     // Navegar a la vista de bienvenida después de cerrar sesión
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => BienvenidoView()),
+      MaterialPageRoute(builder: (context) => const BienvenidoView()),
       (route) => false,
     );
   }
@@ -25,7 +26,7 @@ class UserView extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
               height:
                   40), // Ajustar el espacio para mover la imagen hacia arriba
           // Imagen de portada
@@ -33,7 +34,7 @@ class UserView extends StatelessWidget {
             'assets/imgs/TriptekkerLogo.jpg',
             height: 150,
           ),
-          Center(
+          const Center(
             child: Text(
               '"Triptekker" es una app de geolocalización y turismo que permite explorar lugares cercanos, guardar favoritos y momentos especiales. Incluye autenticación de usuarios y cierre de sesión.',
               textAlign: TextAlign.center, // Alineación del texto al centro
@@ -44,7 +45,7 @@ class UserView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           Expanded(
             child: Center(
@@ -56,9 +57,9 @@ class UserView extends StatelessWidget {
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text('Error al obtener datos',
+                    return const Text('Error al obtener datos',
                         style: TextStyle(
                             color: Colors
                                 .black)); // Cambia el color del texto a negro
@@ -74,28 +75,28 @@ class UserView extends StatelessWidget {
                       children: [
                         Text(
                           username ?? '',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors
                                 .black, // Cambia el color del texto a negro
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         if (photoURL != null)
                           CircleAvatar(
                             radius: 50,
                             backgroundImage: NetworkImage(photoURL),
                           ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Botón para cerrar sesión
                         ElevatedButton.icon(
                           onPressed: () => _signOut(context),
-                          icon: Icon(Icons.logout,
+                          icon: const Icon(Icons.logout,
                               color: Colors
                                   .black), // Cambia el color del icono a negro
-                          label: Text('Cerrar sesión',
+                          label: const Text('Cerrar sesión',
                               style: TextStyle(
                                   color: Colors
                                       .black)), // Cambia el color del texto a negro
@@ -108,39 +109,42 @@ class UserView extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Botones que llevan a diferentes vistas
           Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {
-                  // Lógica para navegar a la primera vista
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FavoritesView()),
+                  );
                 },
-                icon: Icon(Icons.star,
+                icon: const Icon(Icons.star,
                     color: Colors.black), // Cambia el color del icono a negro
-                label: Text('Lugares favoritos del usuario',
+                label: const Text('Lugares favoritos del usuario',
                     style: TextStyle(
                         color:
                             Colors.black)), // Cambia el color del texto a negro
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(200, 50), // Ancho y alto del botón
+                  minimumSize: const Size(200, 50), // Ancho y alto del botón
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {
                   // Lógica para navegar a la segunda vista
                 },
-                icon: Icon(Icons.camera,
+                icon: const Icon(Icons.camera,
                     color: Colors.black), // Cambia el color del icono a negro
-                label: Text('Momentos guardados a través de la cámara',
+                label: const Text('Momentos guardados a través de la cámara',
                     style: TextStyle(
                         color:
                             Colors.black)), // Cambia el color del texto a negro
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(200, 50),
+                  minimumSize: const Size(200, 50),
                 ),
               ),
               const SizedBox(height: 10),
