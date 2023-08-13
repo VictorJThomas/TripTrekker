@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as places;
 import 'package:location/location.dart' as loc;
-import 'package:http/http.dart' as http;
-import 'dart:math' show sin, cos, sqrt, atan2;
-import 'dart:convert';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -169,7 +166,7 @@ class MapScreenState extends State<MapScreen> {
 
   Future<void> _getPlaceDetails(String placeId) async {
     final response = await _places.getDetailsByPlaceId(placeId);
-    if (response.isOkay && response.result != null) {
+    if (response.isOkay) {
       final location = response.result.geometry?.location;
       if (location != null) {
         final GoogleMapController controller = await _controller.future;

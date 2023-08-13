@@ -37,6 +37,7 @@ class BienvenidoView extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const LoginView()));
+                                Navigator.pushReplacementNamed(context, '/home');
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(15.0),
