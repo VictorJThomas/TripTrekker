@@ -19,7 +19,6 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener la información del usuario actualmente autenticado
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
@@ -28,8 +27,7 @@ class UserView extends StatelessWidget {
         children: [
           const SizedBox(
               height:
-                  40), // Ajustar el espacio para mover la imagen hacia arriba
-          // Imagen de portada
+                  40), 
           Image.asset(
             'assets/imgs/TriptekkerLogo.jpg',
             height: 150,
@@ -37,11 +35,11 @@ class UserView extends StatelessWidget {
           const Center(
             child: Text(
               '"Triptekker" es una app de geolocalización y turismo que permite explorar lugares cercanos, guardar favoritos y momentos especiales. Incluye autenticación de usuarios y cierre de sesión.',
-              textAlign: TextAlign.center, // Alineación del texto al centro
+              textAlign: TextAlign.center, 
               style: TextStyle(
                 fontSize: 16,
                 fontFamily: 'Arial',
-                color: Colors.black, // Cambia el color del texto a negro
+                color: Colors.black, 
               ),
             ),
           ),
@@ -62,7 +60,7 @@ class UserView extends StatelessWidget {
                     return const Text('Error al obtener datos',
                         style: TextStyle(
                             color: Colors
-                                .black)); // Cambia el color del texto a negro
+                                .black));
                   } else {
                     String? username =
                         snapshot.data?.get('username') as String?;
@@ -79,7 +77,7 @@ class UserView extends StatelessWidget {
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors
-                                .black, // Cambia el color del texto a negro
+                                .black, 
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -89,17 +87,13 @@ class UserView extends StatelessWidget {
                             backgroundImage: NetworkImage(photoURL),
                           ),
                         const SizedBox(height: 20),
-
-                        // Botón para cerrar sesión
                         ElevatedButton.icon(
                           onPressed: () => _signOut(context),
                           icon: const Icon(Icons.logout,
                               color: Colors
-                                  .black), // Cambia el color del icono a negro
+                                  .black),
                           label: const Text('Cerrar sesión',
-                              style: TextStyle(
-                                  color: Colors
-                                      .black)), // Cambia el color del texto a negro
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ],
                     );
@@ -108,10 +102,7 @@ class UserView extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // Botones que llevan a diferentes vistas
           Column(
             children: [
               const SizedBox(height: 10),
