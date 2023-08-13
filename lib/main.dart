@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:triptekker/views/login/BienvenidoView.dart';
 
-import 'views/home_view.dart';
-
 void main() async {
   // Inicialziar firebase antes de correr la app
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,18 +12,13 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Trip Trekker',
-      theme: ThemeData(
-        colorSchemeSeed: Color.fromARGB(255, 34, 162, 88),
-        useMaterial3: true,
+    return const Directionality(
+      textDirection: TextDirection.ltr,
+      child: MaterialApp(
+        home: Scaffold(
+          body: BienvenidoView(),
+        ),
       ),
-      initialRoute: '/', // Set the initial route
-      routes: {
-        '/': (context) => const BienvenidoView(),
-        '/home': (context) => const TripTrekkerApp(),
-      },
     );
   }
 }

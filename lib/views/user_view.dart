@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../views/login/BienvenidoView.dart';
+import 'bachead.dart';
 import 'favorites/favorites.dart';
 
 class UserView extends StatelessWidget {
@@ -58,8 +59,7 @@ class UserView extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                   );
                 } else {
-                  String? username =
-                      snapshot.data?.get('username') as String?;
+                  String? username = snapshot.data?.get('username') as String?;
                   String? photoURL =
                       snapshot.data?.get('profilePictureUrl') as String?;
 
@@ -109,6 +109,28 @@ class UserView extends StatelessWidget {
                         ),
                         label: Text(
                           'Lugares favoritos del usuario',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(200, 50),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BacheadView(),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.star,
+                          color: Colors.black,
+                        ),
+                        label: Text(
+                          'Bachead',
                           style: TextStyle(color: Colors.black),
                         ),
                         style: ElevatedButton.styleFrom(
