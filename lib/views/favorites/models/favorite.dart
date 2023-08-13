@@ -1,29 +1,20 @@
-import 'package:hive/hive.dart';
+class Favorite {
+  late final String title;
 
-part 'favorite.g.dart';
-
-@HiveType(typeId: 0)
-class Favorite extends HiveObject {
-  @HiveField(0)
-  late String title;
-
-  @HiveField(1)
-  late String imagePath;
-
-  @HiveField(2)
-  late DateTime date;
-
-  @HiveField(3)
-  late String location; 
-
-  @HiveField(4)
+  late final String imagePath;
+  final String date;
+  late String location;
   late String description;
+  final int? id;
+  late final String userId;
 
   Favorite({
+    this.id,
     required this.title,
     required this.imagePath,
     required this.date,
     required this.location,
     required this.description,
+    required this.userId,
   });
 }

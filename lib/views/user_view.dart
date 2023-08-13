@@ -119,7 +119,10 @@ class UserView extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FavoritesView()),
+                    MaterialPageRoute(
+                        builder: (context) => FavoritesView(
+                              userId: currentUser!.uid,
+                            )),
                   );
                 },
                 icon: const Icon(Icons.star,
@@ -132,24 +135,10 @@ class UserView extends StatelessWidget {
                   minimumSize: const Size(200, 50), // Ancho y alto del botón
                 ),
               ),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Lógica para navegar a la segunda vista
-                },
-                icon: const Icon(Icons.camera,
-                    color: Colors.black), // Cambia el color del icono a negro
-                label: const Text('Momentos guardados a través de la cámara',
-                    style: TextStyle(
-                        color:
-                            Colors.black)), // Cambia el color del texto a negro
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 50),
-                ),
-              ),
-              const SizedBox(height: 10),
-              const SizedBox(height: 10),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ],
