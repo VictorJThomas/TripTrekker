@@ -13,14 +13,9 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool _passwordVisible = false;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  void _onLoginSuccess() {
-    // Navigate to the home page when login is successful
-    Navigator.pushReplacementNamed(context, '/home');
-  }
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +146,6 @@ class _LoginViewState extends State<LoginView> {
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.CENTER,
                           );
-                          _onLoginSuccess();
                         } else {
                           try {
                             // Iniciar sesión con el correo y contraseña
@@ -164,10 +158,11 @@ class _LoginViewState extends State<LoginView> {
                             // Verificar si el inicio de sesión fue exitoso
                             if (userCredential.user != null) {
                               // Inicio de sesión exitoso, navegar al HomeView
-                              Navigator.pushNamedAndRemoveUntil(
+                              Navigator.pushReplacement(
                                 context,
-                                '/home', // Replace with the actual route name for your home screen
-                                (route) => false,
+                                MaterialPageRoute(
+                                  builder: (context) => TripTrekkerApp(),
+                                ),
                               );
                             } else {
                               // Las credenciales son incorrectas, mostrar mensaje de error
