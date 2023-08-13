@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'models/favorite.dart';
 
 class FavoriteDetailsView extends StatelessWidget {
@@ -8,51 +11,76 @@ class FavoriteDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Convertir la fecha de String a DateTime
+    final date = favorite.date;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles del Lugar Favorito'),
+        title: Text(
+          'Detalles del Lugar Favorito',
+          style: (TextStyle(color: Colors.black)),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Regresar a la vista anterior
+          },
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              favorite.title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              title: Text(
+                favorite.title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              'Fecha de Creación: ${favorite.date.toString()}',
-              style: const TextStyle(
-                fontSize: 16,
+            ListTile(
+              title: Text(
+                'Fecha',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                date,
               ),
             ),
-            const SizedBox(height: 20),
-            if (favorite.imagePath.isNotEmpty)
-              Image.asset(
-                favorite.imagePath,
-                height: 200,
-                fit: BoxFit.cover,
+            ListTile(
+              title: Text(
+                'Descripción',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            const SizedBox(height: 20),
-            Text(
-              'Ubicación: ${favorite.location}',
-              style: const TextStyle(
-                fontSize: 16,
+              subtitle: Text(
+                favorite.description,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Descripción:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            if (favorite.imagePath.isNotEmpty) ...[
+              SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  'Imagen',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Image.file(
+                  File(favorite.imagePath),
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

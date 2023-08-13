@@ -1,12 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:triptekker/views/favorites/helper/favorite_provider.dart';
 import 'package:triptekker/views/favorites/models/favorite.dart';
 
+import 'helper/DbManager.dart';
+
 class FavoritesFormView extends StatefulWidget {
+  final String userId; // Agregar userId al constructor
+  FavoritesFormView({required this.userId});
+
   @override
   _FavoritesFormViewState createState() => _FavoritesFormViewState();
 }
@@ -19,7 +21,7 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
   String? description;
 
   getImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     setState(() {
       _image = image;
@@ -28,17 +30,18 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
 
   submitData() async {
     final isValid = _formKey.currentState?.validate() ?? false;
-
+    DateTime date = DateTime.now();
+    String dateText = date.toString();
     if (isValid) {
-      final favoritesProvider = Provider.of<FavoritesProvider>(context, listen: false);
       final newFavorite = Favorite(
         title: title!,
         description: description!,
-        imagePath: _image!.path, 
+        imagePath: _image!.path,
         location: '',
-        date: DateTime.now(),
+        date: dateText,
+        userId: widget.userId,
       );
-      favoritesProvider.addFavorite(newFavorite);
+      await DbManager.addEntry(newFavorite); // Sube los datos
 
       Navigator.of(context).pop();
     }
@@ -48,12 +51,26 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add a Favorite"),
+        title: Text(
+          "Añadir favorito",
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Regresar a la vista anterior
+          },
+        ),
         actions: [
           IconButton(
             onPressed: submitData,
             icon: Icon(Icons.save),
-          )
+          ),
         ],
       ),
       body: SafeArea(
@@ -64,38 +81,30 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
             child: ListView(
               children: [
                 TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Title',
-                  ),
-                  autocorrect: false,
-                  validator: (val) {
-                    if (val?.isEmpty ?? true) {
-                      return 'Please enter a title';
+                  decoration: InputDecoration(labelText: 'Título'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa un título';
                     }
                     return null;
                   },
-                  onChanged: (val) {
+                  onChanged: (value) {
                     setState(() {
-                      title = val;
+                      title = value;
                     });
                   },
                 ),
                 TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                  ),
-                  autocorrect: false,
-                  minLines: 2,
-                  maxLines: 10,
-                  validator: (val) {
-                    if (val?.isEmpty ?? true) {
-                      return 'Please enter a description';
+                  decoration: InputDecoration(labelText: 'Descripción'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa una descripción';
                     }
                     return null;
                   },
-                  onChanged: (val) {
+                  onChanged: (value) {
                     setState(() {
-                      description = val;
+                      description = value;
                     });
                   },
                 ),
@@ -107,6 +116,16 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
                     : Image.file(
                         File(_image!.path),
                       ),
+                SizedBox(
+                  height: 25,
+                ),
+                ElevatedButton(
+                  onPressed: submitData,
+                  child: Text(
+                    'Añadir a favoritos',
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                ),
               ],
             ),
           ),
@@ -114,7 +133,7 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: getImage,
-        child: Icon(Icons.camera),
+        child: Icon(Icons.image),
       ),
     );
   }

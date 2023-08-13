@@ -10,7 +10,16 @@ class FavoritesViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite Details'),
+        title: Text('Detalles de los favoritos'),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Regresar a la vista anterior
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,7 +28,6 @@ class FavoritesViewScreen extends StatelessWidget {
           children: [
             Text('Title: ${favorite.title}'),
             Text('Date: ${favorite.date.toString()}'),
-            // Display other favorite details as needed
           ],
         ),
       ),
