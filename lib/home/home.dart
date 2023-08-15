@@ -4,7 +4,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as places;
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
-import 'dart:math' show sin, cos, sqrt, atan2;
 import 'dart:convert';
 
 class MapScreen extends StatefulWidget {
@@ -154,8 +153,10 @@ class MapScreenState extends State<MapScreen> {
     if (response.isOkay) {
       setState(() {
         _predictions = response.predictions;
-        if (_predictions.isNotEmpty) {
-          final placeId = _predictions[0].placeId;
+        _markers.clear(); // Clear existing markers
+
+        for (final prediction in _predictions) {
+          final placeId = prediction.placeId;
           if (placeId != null) {
             _getPlaceDetails(placeId);
           }
