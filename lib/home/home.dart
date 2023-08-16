@@ -226,8 +226,12 @@ class MapScreenState extends State<MapScreen> {
 
         if (response.statusCode == 200) {
           final data = response.data;
+          dynamic durationData = data['rows'][0]['elements'][0]['duration'];
+
           String durationText =
-              data['rows'][0]['elements'][0]['duration']['text'];
+              durationData != null && durationData['text'] != null
+                  ? durationData['text']
+                  : 'Duración no disponible';
 
           showDialog(
             context: context,

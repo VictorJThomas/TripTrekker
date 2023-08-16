@@ -31,11 +31,11 @@ class _FavoritesListScreenState extends State<FavoritesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorites List'),
+        title: const Text('Lista de favoritos'),
       ),
       body: favorites.isEmpty
           ? const Center(
-              child: Text('No favorites yet.'),
+              child: Text('No hay favoritos aun.'),
             )
           : ListView.builder(
               itemCount: favorites.length,

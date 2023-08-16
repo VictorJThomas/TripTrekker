@@ -79,11 +79,20 @@ class FavoriteDetailsView extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                favorite.location,
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+              child: ListTile(
+                title: Text(
+                  'Ubicación',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: RichText(
+                  text: TextSpan(
+                    text: 'Latitud ${favorite.location}',
+                    style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                  ),
                 ),
               ),
             ),
