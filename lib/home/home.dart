@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:http/http.dart';
 import 'package:location/location.dart' as loc;
+import 'package:google_maps_webservice/directions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:google_maps_webservice/places.dart';
+import 'package:dio/dio.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:location/location.dart';
 
@@ -22,15 +25,14 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => MapScreenState();
 }
 
-const kGoogleApiKey =
-    'AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54'; // Replace with your API Key
+const kGoogleApiKey = 'AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54';
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
 // Estado de la pantalla del mapa
 class MapScreenState extends State<MapScreen> {
   // Posición inicial de la cámara
   static const CameraPosition initialCameraPosition =
-      CameraPosition(target: LatLng(37.42796, -122.08574), zoom: 14.0);
+      CameraPosition(target: LatLng(24.42798, -121.09575), zoom: 14.0);
 
   // Lista de marcadores en el mapa
   Set<Marker> markersList = {};
@@ -51,7 +53,7 @@ class MapScreenState extends State<MapScreen> {
           // Widget de Google Map
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(37.42796, -122.08574),
+              target: LatLng(24.42798, -121.09575),
               zoom: 14.0,
             ),
             markers: markersList,
@@ -203,40 +205,71 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _showFormWithPlaceDetails(String title, LatLng location) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Detalles del Lugar'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Título: $title'),
-              SizedBox(height: 10),
-              Text(
-                  'Ubicación: Latitud ${location.latitude}, Longitud ${location.longitude}'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showAddTitleAndLocationForm(title, location);
-              },
-              child: Text('Añadir a favoritos'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Cerrar el diálogo
-              },
-              child: Text('Cancelar'),
-            ),
-          ],
+  void _showFormWithPlaceDetails(String title, LatLng location) async {
+    LocationData? currentLocation = await _getCurrentLocation();
+
+    if (currentLocation != null) {
+      try {
+        String origins =
+            '${currentLocation.latitude},${currentLocation.longitude}';
+        String destinations = '${location.latitude},${location.longitude}';
+
+        var response = await Dio().get(
+          'https://maps.googleapis.com/maps/api/distancematrix/json',
+          queryParameters: {
+            'units': 'imperial',
+            'origins': origins,
+            'destinations': destinations,
+            'key': kGoogleApiKey,
+          },
         );
-      },
-    );
+
+        if (response.statusCode == 200) {
+          final data = response.data;
+          String durationText =
+              data['rows'][0]['elements'][0]['duration']['text'];
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Detalles del Lugar'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Título: $title'),
+                    SizedBox(height: 10),
+                    Text(
+                        'Ubicación: Latitud ${location.latitude}, Longitud ${location.longitude}'),
+                    Text('Estimación de tiempo de llegada: $durationText'),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _showAddTitleAndLocationForm(title, location);
+                    },
+                    child: Text('Añadir a favoritos'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Cerrar el diálogo
+                    },
+                    child: Text('Cancelar'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          print('Error fetching distance matrix data');
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
   }
 
   void _showAddTitleAndLocationForm(String title, LatLng location) {

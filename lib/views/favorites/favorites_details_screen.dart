@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'models/favorite.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FavoriteDetailsView extends StatelessWidget {
   final Favorite favorite;
@@ -66,15 +68,23 @@ class FavoriteDetailsView extends StatelessWidget {
                 favorite.description,
               ),
             ),
-            ListTile(
-              title: Text(
-                'Ubicacion',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Text(
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SelectedLocationMapScreen(
+                      initialLocation: favorite.location,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
                 favorite.location,
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
             if (favorite.imagePath.isNotEmpty) ...[
@@ -96,5 +106,59 @@ class FavoriteDetailsView extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class SelectedLocationMapScreen extends StatefulWidget {
+  final String initialLocation;
+
+  SelectedLocationMapScreen({required this.initialLocation});
+
+  @override
+  _SelectedLocationMapScreenState createState() =>
+      _SelectedLocationMapScreenState();
+}
+
+class _SelectedLocationMapScreenState extends State<SelectedLocationMapScreen> {
+  GoogleMapController? googleMapController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ubicación Seleccionada'),
+      ),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: _parseLatLng(widget.initialLocation),
+          zoom: 14.0,
+        ),
+        onMapCreated: (controller) {
+          setState(() {
+            googleMapController = controller;
+          });
+        },
+        markers: _createMarkers(),
+      ),
+    );
+  }
+
+  LatLng _parseLatLng(String latLngString) {
+    final latLngWithoutPrefix =
+        latLngString.replaceAll('Latitud ', '').replaceAll('Longitud ', '');
+    List<String> latLng = latLngWithoutPrefix.split(',');
+    double lat = double.parse(latLng[0]);
+    double lng = double.parse(latLng[1]);
+    return LatLng(lat, lng);
+  }
+
+  Set<Marker> _createMarkers() {
+    return {
+      Marker(
+        markerId: MarkerId("selected"),
+        position: _parseLatLng(widget.initialLocation),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ),
+    };
   }
 }
