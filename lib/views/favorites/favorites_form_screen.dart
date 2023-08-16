@@ -2,12 +2,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:triptekker/views/favorites/models/favorite.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'helper/DbManager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FavoritesFormView extends StatefulWidget {
-  final String userId; // Agregar userId al constructor
-  FavoritesFormView({required this.userId});
+  final String userId;
+  final String? title;
+  final LatLng? location;
+
+  FavoritesFormView({required this.userId, this.title, this.location});
 
   @override
   _FavoritesFormViewState createState() => _FavoritesFormViewState();
@@ -19,6 +23,18 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
   XFile? _image;
   String? title;
   String? description;
+  String? location;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Inicializa los valores si están disponibles
+    title = widget.title ?? '';
+    location = widget.location != null
+        ? 'Latitud ${widget.location!.latitude}, Longitud ${widget.location!.longitude}'
+        : '';
+  }
 
   getImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -37,11 +53,11 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
         title: title!,
         description: description!,
         imagePath: _image!.path,
-        location: '',
+        location: location!,
         date: dateText,
         userId: widget.userId,
       );
-      await DbManager.addEntry(newFavorite); // Sube los datos
+      await DbManager.addEntry(newFavorite);
 
       Navigator.of(context).pop();
     }
@@ -63,7 +79,7 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context); // Regresar a la vista anterior
+            Navigator.pop(context);
           },
         ),
         actions: [
@@ -81,10 +97,11 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
             child: ListView(
               children: [
                 TextFormField(
+                  initialValue: title, // Rellenar el título si está disponible
                   decoration: InputDecoration(labelText: 'Título'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor ingresa un título';
+                      return 'Título';
                     }
                     return null;
                   },
@@ -105,6 +122,25 @@ class _FavoritesFormViewState extends State<FavoritesFormView> {
                   onChanged: (value) {
                     setState(() {
                       description = value;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                TextFormField(
+                  initialValue:
+                      location, // Rellenar la ubicación si está disponible
+                  decoration: InputDecoration(labelText: 'Ubicacion'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Ubicacion';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      location = value;
                     });
                   },
                 ),

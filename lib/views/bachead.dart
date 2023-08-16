@@ -187,7 +187,7 @@ List<Map<String, dynamic>> touristPlaces = [
         'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/27/19/17/35/caption.jpg?w=300&h=300&s=1',
   },
   {
-    'name': 'Zona Colinial, Santo Domingo RD',
+    'name': 'Zona Colonial, Santo Domingo RD',
     'imageUrl':
         'https://content.r9cdn.net/rimg/dimg/f2/36/1fbe7a3d-hood-216602-169d9893ee2.jpg?width=1366&height=768&xhint=1327&yhint=1439&crop=true',
   },

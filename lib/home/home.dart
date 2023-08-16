@@ -1,6 +1,7 @@
 // Importaciones de paquetes necesarios
 import 'dart:async';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +12,8 @@ import 'dart:convert';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:location/location.dart';
+
+import '../views/favorites/favorites_form_screen.dart';
 
 // Clase que define la pantalla del mapa
 
@@ -100,6 +103,19 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
+  // Definir la función para centrar el mapa en la ubicación actual
+  void _goToCurrentLocation() async {
+    LocationData? currentLocation = await _getCurrentLocation();
+    if (currentLocation != null && googleMapController != null) {
+      googleMapController.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(currentLocation.latitude!, currentLocation.longitude!),
+          14.0,
+        ),
+      );
+    }
+  }
+
   // Manejar la acción del botón "Buscar Destinos"
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
@@ -160,32 +176,107 @@ class MapScreenState extends State<MapScreen> {
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
 
-    // Limpiar la lista de marcadores y agregar uno nuevo
     markersList.clear();
     markersList.add(Marker(
         markerId: const MarkerId("0"),
         position: LatLng(lat, lng),
         infoWindow: InfoWindow(title: detail.result.name)));
 
-    // Actualizar el estado para reflejar los cambios en el mapa
     setState(() {});
 
-    // Animar la cámara para enfocar el nuevo marcador
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14.0));
+
+    _showFormWithPlaceDetails(detail.result.name, LatLng(lat, lng));
   }
 
-  // Centrar el mapa en la ubicación actual del dispositivo
-  Future<void> _goToCurrentLocation() async {
-    LocationData? currentLocation = await _getCurrentLocation();
-    if (currentLocation != null) {
-      // Animar la cámara para centrarse en la ubicación actual
-      googleMapController.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(currentLocation.latitude!, currentLocation.longitude!),
-          14.0,
+  void _showFavoritesForm(String title, LatLng location, String userId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FavoritesFormView(
+          userId: userId,
+          title: title,
+          location: location,
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  void _showFormWithPlaceDetails(String title, LatLng location) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Detalles del Lugar'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Título: $title'),
+              SizedBox(height: 10),
+              Text(
+                  'Ubicación: Latitud ${location.latitude}, Longitud ${location.longitude}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showAddTitleAndLocationForm(title, location);
+              },
+              child: Text('Añadir a favoritos'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAddTitleAndLocationForm(String title, LatLng location) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Obtener el usuario autenticado
+        User? user = FirebaseAuth.instance.currentUser;
+
+        return AlertDialog(
+          title: Text('Agregar Título'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                initialValue: title,
+                decoration: InputDecoration(labelText: 'Título'),
+                onChanged: (value) {
+                  setState(() {
+                    title = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (user != null) {
+                  _showFavoritesForm(
+                      title, location, user.uid); // Pasa el userId
+                }
+              },
+              child: Text('Continuar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

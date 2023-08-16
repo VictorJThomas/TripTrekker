@@ -66,6 +66,17 @@ class FavoriteDetailsView extends StatelessWidget {
                 favorite.description,
               ),
             ),
+            ListTile(
+              title: Text(
+                'Ubicacion',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                favorite.location,
+              ),
+            ),
             if (favorite.imagePath.isNotEmpty) ...[
               SizedBox(height: 16),
               ListTile(
