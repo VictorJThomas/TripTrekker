@@ -1,184 +1,191 @@
+// Importaciones de paquetes necesarios
 import 'dart:async';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart' as places;
+import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:google_maps_webservice/places.dart';
+import 'package:google_api_headers/google_api_headers.dart';
+import 'package:location/location.dart';
+
+// Clase que define la pantalla del mapa
 
 class MapScreen extends StatefulWidget {
   @override
   State<MapScreen> createState() => MapScreenState();
 }
 
+const kGoogleApiKey =
+    'AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54'; // Replace with your API Key
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
+
+// Estado de la pantalla del mapa
 class MapScreenState extends State<MapScreen> {
-  final Completer<GoogleMapController> _controller = Completer();
-  final Set<Marker> _markers = Set<Marker>();
-  final _places = places.GoogleMapsPlaces(
-      apiKey: 'AIzaSyAY3GtsN69ANEf01HF1h8L0Sto2Bmu0T54');
-  final TextEditingController _searchController = TextEditingController();
-  List<places.Prediction> _predictions = [];
-  double? _userLat;
-  double? _userLng;
+  // Posición inicial de la cámara
+  static const CameraPosition initialCameraPosition =
+      CameraPosition(target: LatLng(37.42796, -122.08574), zoom: 14.0);
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-    _searchController.addListener(_onSearchChanged);
-  }
+  // Lista de marcadores en el mapa
+  Set<Marker> markersList = {};
 
-  void _setMarker(LatLng point) {
-    setState(() {
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('marker'),
-          position: point,
-        ),
-      );
-    });
-  }
+  // Controlador del mapa de Google
+  late GoogleMapController googleMapController;
 
-  @override
-  void dispose() {
-    _searchController.removeListener(_onSearchChanged);
-    _searchController.dispose();
-    super.dispose();
-  }
+  // Modo de visualización del mapa
+  final Mode _mode = Mode.overlay;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: homeScaffoldKey,
+      // Cuerpo de la pantalla
       body: Stack(
         children: [
+          // Widget de Google Map
           GoogleMap(
-            mapType: MapType.normal,
-            markers: _markers,
             initialCameraPosition: CameraPosition(
-              target: LatLng(_userLat ?? 0, _userLng ?? 0),
+              target: LatLng(37.42796, -122.08574),
               zoom: 14.0,
             ),
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
+            markers: markersList,
+            mapType: MapType.normal,
+            // Callback cuando se crea el mapa
+            onMapCreated: (GoogleMapController controller) async {
+              googleMapController = controller;
+
+              // Obtener la ubicación actual del dispositivo
+              LocationData? currentLocation = await _getCurrentLocation();
+              if (currentLocation != null) {
+                // Animar la cámara para centrarse en la ubicación actual
+                googleMapController.animateCamera(
+                  CameraUpdate.newLatLngZoom(
+                    LatLng(
+                        currentLocation.latitude!, currentLocation.longitude!),
+                    14.0,
+                  ),
+                );
+                // Agregar un marcador en la ubicación actual
+                markersList.add(Marker(
+                  markerId: const MarkerId("current"),
+                  position: LatLng(
+                      currentLocation.latitude!, currentLocation.longitude!),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueAzure),
+                ));
+                // Actualizar el estado para reflejar los cambios en el mapa
+                setState(() {});
+              }
             },
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            padding: EdgeInsets.only(right: 10.0),
           ),
+          // Botón para buscar destinos
+          ElevatedButton(
+            onPressed: _handlePressButton,
+            child: const Text("Buscar Destinos"),
+          ),
+          // Botón para centrar el mapa en la ubicación actual
           Positioned(
             top: 16.0,
-            left: 16.0,
             right: 16.0,
-            child: _buildSearchField(),
+            child: ElevatedButton(
+              onPressed: _goToCurrentLocation,
+              child: const Icon(Icons.my_location),
+            ),
           ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 90.0),
-        child: FloatingActionButton(
-          onPressed: _getCurrentLocation,
-          mini: true,
-          child: const Icon(Icons.my_location),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  Widget _buildSearchField() {
-    return Container(
-      color: Colors.white,
-      child: TextField(
-        controller: _searchController,
+  // Manejar la acción del botón "Buscar Destinos"
+  Future<void> _handlePressButton() async {
+    Prediction? p = await PlacesAutocomplete.show(
+        context: context,
+        apiKey: kGoogleApiKey,
+        onError: onError,
+        mode: _mode,
+        language: 'en',
+        strictbounds: false,
+        types: [""],
         decoration: InputDecoration(
-          hintText: 'Busca una ubicacion',
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-          suffixIcon: const Icon(Icons.search),
-        ),
-        onSubmitted: (query) {
-          _searchPlaces(query);
-        },
+            hintText: 'Search',
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: Colors.white))),
+        components: [
+          Component(Component.country, "do"),
+        ]);
+
+    // Mostrar los detalles del lugar seleccionado
+    displayPrediction(p!, homeScaffoldKey.currentState);
+  }
+
+  // Manejar errores durante la búsqueda de lugares
+  void onError(PlacesAutocompleteResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: 'Message',
+        message: response.errorMessage!,
+        contentType: ContentType.failure,
       ),
-    );
+    ));
   }
 
-  void _onSearchChanged() {
-    _searchPlaces(_searchController.text);
-  }
-
-  Future<void> _getCurrentLocation() async {
-    loc.LocationData? locationData;
-    var location = loc.Location();
-
+  // Obtener la ubicación actual del dispositivo
+  Future<LocationData?> _getCurrentLocation() async {
+    final location = loc.Location();
     try {
-      locationData = await location.getLocation();
+      return await location.getLocation();
     } catch (e) {
-      locationData = null;
+      print("Error getting location: $e");
+      return null;
     }
+  }
 
-    if (locationData != null) {
-      setState(() {
-        _userLat = locationData?.latitude;
-        _userLng = locationData?.longitude;
-      });
+  // Mostrar los detalles del lugar seleccionado y actualizar el mapa
+  Future<void> displayPrediction(
+      Prediction p, ScaffoldState? currentState) async {
+    GoogleMapsPlaces places = GoogleMapsPlaces(
+        apiKey: kGoogleApiKey,
+        apiHeaders: await const GoogleApiHeaders().getHeaders());
 
-      final GoogleMapController controller = await _controller.future;
-      controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(_userLat!, _userLng!), zoom: 14),
+    PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+
+    final lat = detail.result.geometry!.location.lat;
+    final lng = detail.result.geometry!.location.lng;
+
+    // Limpiar la lista de marcadores y agregar uno nuevo
+    markersList.clear();
+    markersList.add(Marker(
+        markerId: const MarkerId("0"),
+        position: LatLng(lat, lng),
+        infoWindow: InfoWindow(title: detail.result.name)));
+
+    // Actualizar el estado para reflejar los cambios en el mapa
+    setState(() {});
+
+    // Animar la cámara para enfocar el nuevo marcador
+    googleMapController
+        .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14.0));
+  }
+
+  // Centrar el mapa en la ubicación actual del dispositivo
+  Future<void> _goToCurrentLocation() async {
+    LocationData? currentLocation = await _getCurrentLocation();
+    if (currentLocation != null) {
+      // Animar la cámara para centrarse en la ubicación actual
+      googleMapController.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(currentLocation.latitude!, currentLocation.longitude!),
+          14.0,
         ),
       );
-
-      _setMarker(LatLng(_userLat!, _userLng!));
-
-      _searchPlaces(_searchController.text);
-    }
-  }
-
-  Future<void> _searchPlaces(String query) async {
-    if (_userLat == null || _userLng == null) {
-      // User's current location not available
-      return;
-    }
-
-    final response = await _places.autocomplete(
-      query,
-      location: places.Location(lat: _userLat!, lng: _userLng!),
-      radius: 5000, // Specify the search radius in meters
-      types: ['geocode'],
-    );
-
-    if (response.isOkay) {
-      setState(() {
-        _predictions = response.predictions;
-        _markers.clear(); // Clear existing markers
-
-        for (final prediction in _predictions) {
-          final placeId = prediction.placeId;
-          if (placeId != null) {
-            _getPlaceDetails(placeId);
-          }
-        }
-      });
-    } else {
-      // Handle the error here
-      print("Error fetching predictions: ${response.errorMessage}");
-    }
-  }
-
-  Future<void> _getPlaceDetails(String placeId) async {
-    final response = await _places.getDetailsByPlaceId(placeId);
-    if (response.isOkay && response.result != null) {
-      final location = response.result.geometry?.location;
-      if (location != null) {
-        final GoogleMapController controller = await _controller.future;
-        controller.animateCamera(
-          CameraUpdate.newLatLngZoom(LatLng(location.lat, location.lng), 14.0),
-        );
-        _setMarker(LatLng(location.lat, location.lng));
-      }
     }
   }
 }
